@@ -1,12 +1,11 @@
 package com.example.SpringPostgress.service;
 
-import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.DTO.EmployeeProductDTO;
 import com.example.SpringPostgress.DTO.ProductDTO;
+import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.model.EmployeeProduct;
 import com.example.SpringPostgress.repository.EmployeeProductRepository;
-import com.example.SpringPostgress.repository.EmployeeRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -40,6 +39,9 @@ public class EmployeeProductService {
 
     public List<EmployeeProductDTO> getAllEmployeeProducts(){
         List<EmployeeProduct> employeeProductList = employeeProductRepository.findAll();
+        if (employeeProductList.isEmpty()) {
+            throw new ResourceNotFoundException("No employee products found.");
+        }
         return modelMapper.map(employeeProductList, new TypeToken<List<EmployeeProductDTO>>(){}.getType());
     }
 
@@ -49,7 +51,8 @@ public class EmployeeProductService {
     }
 
     public EmployeeProductDTO getEmployeeProductById(Long id) {
-        Optional<EmployeeProduct> employeeProduct = employeeProductRepository.findById(id);
+        EmployeeProduct employeeProduct = employeeProductRepository.findById(id)
+                .orElseThrow(()->  new ResourceNotFoundException("Employee Product with ID: " +id+" not found."));
         return modelMapper.map(employeeProduct, EmployeeProductDTO.class);
     }
 

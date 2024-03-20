@@ -1,6 +1,7 @@
 package com.example.SpringPostgress.service;
 
 import com.example.SpringPostgress.DTO.ProductDTO;
+import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Product;
 import com.example.SpringPostgress.repository.ProductRepository;
 import jakarta.transaction.Transactional;
@@ -34,6 +35,9 @@ public class ProductService {
 
     public List<ProductDTO> getAllProducts(){
         List<Product> productList = productRepository.findAll();
+        if (productList.isEmpty()) {
+            throw new ResourceNotFoundException("No products found.");
+        }
         return modelMapper.map(productList, new TypeToken<List<ProductDTO>>(){}.getType());
     }
 
@@ -43,7 +47,8 @@ public class ProductService {
     }
 
     public ProductDTO getProductById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
+        Product product = productRepository.findById(id)
+                .orElseThrow(()->  new ResourceNotFoundException("Product with ID: " +id+" not found."));
         return modelMapper.map(product, ProductDTO.class);
     }
 }

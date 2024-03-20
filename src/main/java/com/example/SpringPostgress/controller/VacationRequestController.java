@@ -51,7 +51,7 @@ public class  VacationRequestController {
 
     @PutMapping("/approval")
     public VacationRequest approveVacationRequest(@RequestBody PendingRequest requestApproval){
-        return vacationRequestService.approveVacationRequest(requestApproval.getId(),requestApproval.getStatus().name());
+        return vacationRequestService.approveVacationRequest(requestApproval.getId(),requestApproval.getStatusFrontend());
     }
 
     // delete vacationRequest rest api

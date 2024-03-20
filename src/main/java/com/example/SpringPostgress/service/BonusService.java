@@ -2,6 +2,8 @@ package com.example.SpringPostgress.service;
 
 import com.example.SpringPostgress.DTO.BonusDTO;
 import com.example.SpringPostgress.Enum.BonusRate;
+import com.example.SpringPostgress.exception.ResourceNotFoundException;
+import com.example.SpringPostgress.exception.SeasonStringException;
 import com.example.SpringPostgress.model.Bonus;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.repository.BonusRepository;
@@ -11,10 +13,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Transactional
@@ -42,6 +41,9 @@ public class BonusService {
 
     public List<BonusDTO> getAllBonuses(){
         List<Bonus> bonusList = bonusRepository.findAll();
+        if (bonusList.isEmpty()) {
+            throw new ResourceNotFoundException("No bonus entries found.");
+        }
         return modelMapper.map(bonusList, new TypeToken<List<BonusDTO>>(){}.getType());
     }
 
@@ -59,7 +61,8 @@ public class BonusService {
 
         double bonus;
 
-        Optional<BonusRate> result = BonusRate.checkSeasonString(season);  //κανε κατι με αυτο
+        int result = BonusRate.checkSeasonString(season);
+        if(result == 0){ throw new SeasonStringException(" "+ season +" doesn't match with the corresponding seasons.");}
 
         if (Objects.equals(season, BonusRate.WINTER.getSeason())){ bonus = salary * BonusRate.WINTER.getRate();}
         else if (Objects.equals(season, BonusRate.SPRING.getSeason())) { bonus = salary * BonusRate.SPRING.getRate();}
@@ -73,8 +76,6 @@ public class BonusService {
 
         List<Employee> employees = employeeService.getEmployeesByCompanyId(companyId);
         List<Bonus> bonuses = new ArrayList<>();
-
-        Optional<BonusRate> result = BonusRate.checkSeasonString(season);  //κανε κατι με αυτο
 
         for (Employee employee : employees) {
 

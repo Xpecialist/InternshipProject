@@ -3,6 +3,8 @@ package com.example.SpringPostgress.service;
 import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import com.example.SpringPostgress.Enum.VacationStatus;
+import com.example.SpringPostgress.exception.ResourceNotFoundException;
+import com.example.SpringPostgress.exception.StatusReportException;
 import com.example.SpringPostgress.model.VacationRequest;
 import com.example.SpringPostgress.repository.VacationRequestRepository;
 import jakarta.transaction.Transactional;
@@ -47,6 +49,9 @@ public class VacationRequestService {
 
     public List<VacationRequestDTO> getAllVacationRequests() {
         List<VacationRequest> vacationRequestList = vacationRequestRepository.findAll();
+        if (vacationRequestList.isEmpty()) {
+            throw new ResourceNotFoundException("No vacation requests found.");
+        }
         return modelMapper.map(vacationRequestList, new TypeToken<List<VacationRequestDTO>>() {
         }.getType());
     }
@@ -58,7 +63,8 @@ public class VacationRequestService {
     }
 
     public VacationRequestDTO getVacationRequestById(Long id) {
-        Optional<VacationRequest> vacationRequest = vacationRequestRepository.findById(id);
+        VacationRequest vacationRequest = vacationRequestRepository.findById(id)
+                .orElseThrow(()->  new ResourceNotFoundException("Vacation Request with ID: " +id+" not found."));
         return modelMapper.map(vacationRequest, VacationRequestDTO.class);
     }
 
@@ -86,11 +92,11 @@ public class VacationRequestService {
 
     }
 
-    public VacationRequest approveVacationRequest(long id, String status) {
+    public VacationRequest approveVacationRequest(long id, String statusFE) {
 
         VacationRequestDTO request = getVacationRequestById(id);
 
-        if(Objects.equals(status, "accepted")){
+        if(Objects.equals(statusFE, "accepted")){
 
             request.setStatus(VacationStatus.APPROVED);
 
@@ -99,8 +105,11 @@ public class VacationRequestService {
 
             employeeService.updateEmployee(employee);
         }
-        else if (Objects.equals(status, "rejected")) {
+        else if (Objects.equals(statusFE, "rejected")) {
             request.setStatus(VacationStatus.REJECTED);
+        }
+        else{
+            throw new StatusReportException("the request was neither accepted nor rejected.");
         }
 
         VacationRequestDTO requestDTO = updateVacationRequest(request); //ισως και να μην χρειαζεται

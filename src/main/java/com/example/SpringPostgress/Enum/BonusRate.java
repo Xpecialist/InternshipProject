@@ -2,6 +2,7 @@ package com.example.SpringPostgress.Enum;
 
 import lombok.Getter;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Getter
@@ -18,9 +19,12 @@ public enum BonusRate {//resolve by static block
         this.rate = rate;
     }
 
-    public static Optional<BonusRate> checkSeasonString(String val) {
-        try { return Optional.of(BonusRate.valueOf(val)); }
-        catch (Exception e) {/* do nothing */}
-        return Optional.empty();
+    public static int checkSeasonString(String val) {
+        if (Objects.equals(val, WINTER.season) | Objects.equals(val, AUTUMN.season) | Objects.equals(val, SPRING.season) | Objects.equals(val, SUMMER.season)){
+            return 1;
+        }
+        else{
+            return 0;
+        }
     }
 }

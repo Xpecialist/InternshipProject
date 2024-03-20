@@ -8,5 +8,6 @@ public class PendingRequest extends VacationRequestDTO {
 
     private int holidays;
     private long employeeId;
+    private String statusFrontend;
 
 }
