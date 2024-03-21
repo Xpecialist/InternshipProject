@@ -1,8 +1,7 @@
 package com.example.SpringPostgress.DTO;
-import com.example.SpringPostgress.model.Employee;
-import com.example.SpringPostgress.model.Product;
+
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.*;

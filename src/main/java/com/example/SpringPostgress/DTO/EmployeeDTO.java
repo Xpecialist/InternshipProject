@@ -1,7 +1,7 @@
 package com.example.SpringPostgress.DTO;
-import com.example.SpringPostgress.model.Company;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.*;
+
 import lombok.*;
 
 import java.time.LocalDate;

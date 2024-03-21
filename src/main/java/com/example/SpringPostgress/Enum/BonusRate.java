@@ -3,7 +3,7 @@ package com.example.SpringPostgress.Enum;
 import lombok.Getter;
 
 import java.util.Objects;
-import java.util.Optional;
+
 
 @Getter
 public enum BonusRate {//resolve by static block
