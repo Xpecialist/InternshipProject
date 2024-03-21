@@ -4,7 +4,7 @@ import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import com.example.SpringPostgress.Enum.VacationStatus;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
-import com.example.SpringPostgress.exception.StatusReportException;
+import com.example.SpringPostgress.exception.VacationDaysException;
 import com.example.SpringPostgress.model.VacationRequest;
 import com.example.SpringPostgress.repository.VacationRequestRepository;
 import jakarta.transaction.Transactional;
@@ -18,8 +18,11 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
 
 
 @Service
@@ -91,30 +94,40 @@ public class VacationRequestService {
         return vacationRequestDTO;
 
     }
+    public VacationRequestDTO approveRequest(VacationRequestDTO request){
 
-    public VacationRequest approveVacationRequest(long id, String statusFE) {
+
+        EmployeeDTO employee = employeeService.getEmployeeById(request.getEmployee().getId());
+        int remainingDays = employee.getVacationDays() - request.getDays();
+        if ( remainingDays < 0) {
+            throw new VacationDaysException("Not enough days available. Remaining days: "+remainingDays);
+        }
+        else {
+            request.setStatus(VacationStatus.APPROVED);
+            employee.setVacationDays((employee.getVacationDays() - request.getDays()));
+            employeeService.updateEmployee(employee);
+            return request;
+        }
+    }
+
+    public VacationRequestDTO rejectRequest(VacationRequestDTO request){
+        request.setStatus(VacationStatus.REJECTED);
+        return request;
+    }
+
+    public VacationRequestDTO approveVacationRequest(long id, String statusFE) {
 
         VacationRequestDTO request = getVacationRequestById(id);
-
-        if(Objects.equals(statusFE, "accepted")){
-
-            request.setStatus(VacationStatus.APPROVED);
-
-            EmployeeDTO employee = employeeService.getEmployeeById(request.getEmployee().getId());
-            employee.setVacationDays(( employee.getVacationDays() - request.getDays()));
-
-            employeeService.updateEmployee(employee);
-        }
-        else if (Objects.equals(statusFE, "rejected")) {
-            request.setStatus(VacationStatus.REJECTED);
-        }
-        else{
-            throw new StatusReportException("the request was neither accepted nor rejected.");
+        if (Objects.equals(String.valueOf(request.getStatus()), "pending")){
+            throw new VacationDaysException("Vacation Request with ID: "+id+" is not pending.");
         }
 
-        VacationRequestDTO requestDTO = updateVacationRequest(request); //ισως και να μην χρειαζεται
+        Map<String, Function<VacationRequestDTO,VacationRequestDTO>> requestMap = new HashMap<>();
+        requestMap.put("accepted", this::approveRequest);
+        requestMap.put("rejected", this::rejectRequest);
+        VacationRequestDTO r = requestMap.get(statusFE).apply(request);
 
-        return modelMapper.map(requestDTO, VacationRequest.class); //μπορει απλα να θελει το request
+        return updateVacationRequest(r);
 
     }
 }

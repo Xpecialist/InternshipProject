@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class VacationRequestDTO {
 
-    private long id;
+    private long id; // = vecationId ????
 
     private EmployeeDTO employee;
 

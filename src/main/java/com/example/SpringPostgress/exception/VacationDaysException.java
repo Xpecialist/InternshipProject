@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import java.io.Serial;
 
 @ResponseStatus(value = HttpStatus.CONFLICT)
-public class StatusReportException extends RuntimeException {
+public class VacationDaysException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
-    public StatusReportException(String message) { super(message); }
+    public VacationDaysException(String message) { super(message); }
 }

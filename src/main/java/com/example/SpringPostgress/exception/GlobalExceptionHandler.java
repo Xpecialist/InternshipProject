@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({SeasonStringException.class, StatusReportException.class})
+    @ExceptionHandler({SeasonStringException.class, VacationDaysException.class})
     public ResponseEntity<Object> handleSeasonException(SeasonStringException ex) {
 
         Map<String, Object> body = new HashMap<>();
