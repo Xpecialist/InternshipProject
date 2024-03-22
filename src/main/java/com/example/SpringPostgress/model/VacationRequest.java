@@ -1,6 +1,5 @@
 package com.example.SpringPostgress.model;
 import com.example.SpringPostgress.Enum.VacationStatus;
-import com.example.SpringPostgress.service.EnumConverter;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -35,8 +34,7 @@ public class VacationRequest {
     @Column(name = "end_date")
     private LocalDate endDate;
 
-    //@Enumerated(EnumType.STRING)
-    @Convert(converter = EnumConverter.class)
+    @Enumerated(EnumType.STRING)
     private VacationStatus status;
 
     private int days;
