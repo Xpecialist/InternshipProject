@@ -2,7 +2,11 @@ package com.example.SpringPostgress.Enum;
 
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 
 @Getter
@@ -19,12 +23,4 @@ public enum BonusRate {//resolve by static block
         this.rate = rate;
     }
 
-    public static int checkSeasonString(String val) {
-        if (Objects.equals(val, WINTER.season) | Objects.equals(val, AUTUMN.season) | Objects.equals(val, SPRING.season) | Objects.equals(val, SUMMER.season)){
-            return 1;
-        }
-        else{
-            return 0;
-        }
-    }
 }

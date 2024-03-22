@@ -1,7 +1,6 @@
 package com.example.SpringPostgress.controller;
 
 import com.example.SpringPostgress.DTO.PendingRequest;
-import com.example.SpringPostgress.model.VacationRequest;
 import com.example.SpringPostgress.service.VacationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

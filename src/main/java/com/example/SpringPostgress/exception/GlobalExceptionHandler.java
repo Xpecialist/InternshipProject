@@ -23,14 +23,24 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler({SeasonStringException.class, VacationDaysException.class})
+    @ExceptionHandler({SeasonStringException.class})
     public ResponseEntity<Object> handleSeasonException(SeasonStringException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("Input error occurred", ex.getMessage());
+        //log.error("Input error occurred: ", ex);
+
+        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler({VacationDaysException.class})
+    public ResponseEntity<Object> handleSeasonException(VacationDaysException ex) {
 
         Map<String, Object> body = new HashMap<>();
         body.put("Input error occurred", ex.getMessage());
         log.error("Input error occurred: ", ex);
 
-        return new ResponseEntity<>(body, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
     }
 
 

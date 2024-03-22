@@ -59,16 +59,15 @@ public class BonusService {
 
     public double calculateBonus(float salary,String season) {
 
-        double bonus;
+        BonusRate bonusSeason;
+       try {
+           bonusSeason = BonusRate.valueOf(season.toUpperCase());
+       }
+       catch(IllegalArgumentException iae){
+            throw new SeasonStringException("This"+ season +"doesn't match with the corresponding seasons.");
+        }
 
-        int result = BonusRate.checkSeasonString(season);
-        if(result == 0){ throw new SeasonStringException(" "+ season +" doesn't match with the corresponding seasons.");}
-
-        if (Objects.equals(season, BonusRate.WINTER.getSeason())){ bonus = salary * BonusRate.WINTER.getRate();}
-        else if (Objects.equals(season, BonusRate.SPRING.getSeason())) { bonus = salary * BonusRate.SPRING.getRate();}
-        else if (Objects.equals(season, BonusRate.SUMMER.getSeason())) { bonus = salary * BonusRate.SUMMER.getRate();}
-        else{ bonus = salary * BonusRate.AUTUMN.getRate();}
-        return bonus;
+        return bonusSeason.getRate() * salary;
 
     }
 
@@ -93,5 +92,6 @@ public class BonusService {
         return bonuses;
 
     }
+
 
 }
