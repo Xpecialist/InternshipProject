@@ -2,6 +2,7 @@ package com.example.SpringPostgress.exception;
 
 
 import ch.qos.logback.classic.Logger;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,10 +10,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
-
+@Log4j2
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-    Logger log;
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<Object> handleResourceException(ResourceNotFoundException ex) {
 
@@ -28,7 +29,7 @@ public class GlobalExceptionHandler {
 
         Map<String, Object> body = new HashMap<>();
         body.put("Input error occurred", ex.getMessage());
-        //log.error("Input error occurred: ", ex);
+        log.error("Input error occurred: ", ex);
 
         return new ResponseEntity<>(body, HttpStatus.CONFLICT);
     }

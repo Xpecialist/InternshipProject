@@ -1,16 +1,12 @@
 package com.example.SpringPostgress.Enum;
 
+import com.example.SpringPostgress.exception.SeasonStringException;
 import lombok.Getter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 
 @Getter
-public enum BonusRate {//resolve by static block
+public enum BonusRate {
     WINTER("winter", 1.3),
     AUTUMN("autumn", 0.4),
     SPRING("spring", 0.6),
@@ -21,6 +17,17 @@ public enum BonusRate {//resolve by static block
     BonusRate(String season, Double rate) {
         this.season = season;
         this.rate = rate;
+    }
+    public static BonusRate checkBonusSeason(String season){
+
+        BonusRate bonusSeason;
+        try {
+            bonusSeason = BonusRate.valueOf(season.toUpperCase());
+        }
+        catch(IllegalArgumentException iae){
+            throw new SeasonStringException("This"+ season +"doesn't match with the corresponding seasons.");
+        }
+        return bonusSeason;
     }
 
 }

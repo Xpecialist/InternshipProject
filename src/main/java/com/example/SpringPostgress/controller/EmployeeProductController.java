@@ -1,8 +1,10 @@
 package com.example.SpringPostgress.controller;
 
 import com.example.SpringPostgress.DTO.ProductDTO;
+import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.service.EmployeeProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,35 +28,34 @@ public class EmployeeProductController {
     @Autowired
     private EmployeeProductService employeeProductService;
 
+    @Transactional(readOnly = true)
     @GetMapping
     public List<EmployeeProductDTO> getEmployeeEmployeeProducts() {
         return employeeProductService.getAllEmployeeProducts();
     }
 
-
-    // create employeeProduct rest api
     @PostMapping
     public EmployeeProductDTO saveEmployeeProduct(@RequestBody EmployeeProductDTO employeeProductDTO) {
         return employeeProductService.saveEmployeeProduct(employeeProductDTO);
     }
 
-    // update employeeProduct rest api
     @PutMapping
     public EmployeeProductDTO updateEmployeeProduct(@RequestBody EmployeeProductDTO employeeProductDTO) {
         return employeeProductService.updateEmployeeProduct(employeeProductDTO);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public EmployeeProductDTO getEmployeeProductById(@PathVariable Long id){
         return employeeProductService.getEmployeeProductById(id);
     }
 
-    // delete employeeProduct rest api
     @DeleteMapping
     public boolean deleteEmployeeProduct(@RequestBody EmployeeProductDTO employeeProductDTO) {
         return employeeProductService.deleteEmployeeProduct(employeeProductDTO);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/company-products/{companyId}")
     public Map<String, List<ProductDTO>> getEmployeeProducts2(@PathVariable int companyId){
         return employeeProductService.getEmployeeProducts(companyId);

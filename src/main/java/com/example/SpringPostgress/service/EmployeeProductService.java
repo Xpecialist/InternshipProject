@@ -65,7 +65,8 @@ public class EmployeeProductService {
 
         for (Employee ce: companyEmployees){
 
-            String employeeFullName = ce.getFirstName() + " " + ce.getLastName();
+            String employeeFullName = ce.getFirstName() + " " + ce.getLastName() + ": "+ ce.getId();
+
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
 

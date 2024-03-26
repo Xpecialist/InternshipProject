@@ -3,6 +3,7 @@ package com.example.SpringPostgress.controller;
 import com.example.SpringPostgress.DTO.PendingRequest;
 import com.example.SpringPostgress.service.VacationRequestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import com.example.SpringPostgress.DTO.VacationRequestDTO;
 
@@ -18,19 +19,18 @@ public class  VacationRequestController {
     @Autowired
     private VacationRequestService vacationRequestService;
 
+    @Transactional(readOnly = true)
     @GetMapping
     public List<VacationRequestDTO> getVacationRequests(){
         return vacationRequestService.getAllVacationRequests();
     }
 
 
-    // create vacationRequest rest api
     @PostMapping
     public VacationRequestDTO saveVacationRequest(@RequestBody VacationRequestDTO vacationRequestDTO) {
         return vacationRequestService.saveVacationRequest(vacationRequestDTO);
     }
 
-    // update vacationRequest rest api
     @PutMapping
     public VacationRequestDTO updateVacationRequest(@RequestBody VacationRequestDTO vacationRequestDTO){
         return vacationRequestService.updateVacationRequest(vacationRequestDTO);
@@ -41,6 +41,7 @@ public class  VacationRequestController {
         return vacationRequestService.checkVacationRequest(vacationRequest.getStartDate(), vacationRequest.getEndDate(), vacationRequest.getHolidays(), vacationRequest.getEmployeeId());
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public VacationRequestDTO getVacationRequestById(@PathVariable Long id){
         return vacationRequestService.getVacationRequestById(id);
@@ -51,7 +52,6 @@ public class  VacationRequestController {
         return vacationRequestService.approveVacationRequest(requestApproval.getId(),requestApproval.getStatusFrontend());
     }
 
-    // delete vacationRequest rest api
     @DeleteMapping
     public boolean deleteVacationRequest(@RequestBody VacationRequestDTO vacationRequestDTO){
         return vacationRequestService.deleteVacationRequest(vacationRequestDTO);

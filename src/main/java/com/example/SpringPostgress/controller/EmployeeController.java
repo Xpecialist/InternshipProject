@@ -3,6 +3,7 @@ package com.example.SpringPostgress.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,28 +26,28 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    // get all employees
+    @Transactional(readOnly = true)
     @GetMapping
     public List<EmployeeDTO> getEmployees(){
         return employeeService.getAllEmployees();
     }
 
-    // create employee rest api
     @PostMapping
     public EmployeeDTO saveEmployee(@RequestBody EmployeeDTO employeeDTO) {
         return employeeService.saveEmployee(employeeDTO);
     }
 
-    // update employee rest api
     @PutMapping
     public EmployeeDTO updateEmployee(@RequestBody EmployeeDTO employeeDTO){
         return employeeService.updateEmployee(employeeDTO);
     }
-    // delete employee rest api
+
     @DeleteMapping
     public boolean deleteEmployee(@RequestBody EmployeeDTO employeeDTO){
         return employeeService.deleteEmployee(employeeDTO);
     }
+
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public EmployeeDTO getEmployeeById(@PathVariable Long id){
         return employeeService.getEmployeeById(id);

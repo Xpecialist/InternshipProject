@@ -3,7 +3,6 @@ package com.example.SpringPostgress.service;
 import com.example.SpringPostgress.DTO.BonusDTO;
 import com.example.SpringPostgress.Enum.BonusRate;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
-import com.example.SpringPostgress.exception.SeasonStringException;
 import com.example.SpringPostgress.model.Bonus;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.repository.BonusRepository;
@@ -59,14 +58,7 @@ public class BonusService {
 
     public double calculateBonus(float salary,String season) {
 
-        BonusRate bonusSeason;
-       try {
-           bonusSeason = BonusRate.valueOf(season.toUpperCase());
-       }
-       catch(IllegalArgumentException iae){
-            throw new SeasonStringException("This"+ season +"doesn't match with the corresponding seasons.");
-        }
-
+        BonusRate bonusSeason = BonusRate.checkBonusSeason(season);
         return bonusSeason.getRate() * salary;
 
     }

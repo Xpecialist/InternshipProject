@@ -3,6 +3,7 @@ package com.example.SpringPostgress.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,34 +25,34 @@ public class CompanyController {
     @Autowired
     private CompanyService companyService;
 
-    //get all companies
+
+    @Transactional(readOnly = true)
     @GetMapping
     public List<CompanyDTO> getCompanies(){
         return companyService.getAllCompanies();
     }
 
 
-    // create company rest api
     @PostMapping
     public CompanyDTO saveCompany(@RequestBody CompanyDTO companyDTO) {
         return companyService.saveCompany(companyDTO);
     }
 
-    // update company rest api
     @PutMapping
     public CompanyDTO updateCompany(@RequestBody CompanyDTO companyDTO){
         return companyService.updateCompany(companyDTO);
     }
+
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public CompanyDTO getCompanyById(@PathVariable Long id){
         return companyService.getCompanyById(id);
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/expenses/{companyId}")
     public double getCompanyExpenses(@PathVariable long companyId){ return companyService.getCompanyExpenses((int) companyId); }
 
-
-    // delete company rest api
     @DeleteMapping
     public boolean deleteCompany(@RequestBody CompanyDTO companyDTO){
         return companyService.deleteCompany(companyDTO);
