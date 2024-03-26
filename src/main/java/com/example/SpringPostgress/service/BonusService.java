@@ -7,6 +7,7 @@ import com.example.SpringPostgress.model.Bonus;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.repository.BonusRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@Log4j2
 @Transactional
 public class BonusService {
 
@@ -70,6 +72,7 @@ public class BonusService {
 
         for (Employee employee : employees) {
 
+            log.debug("In loop for creating company bonuses");
             float bonusAmount = (float) calculateBonus(employee.getSalary(), season);
             Bonus bonus = new Bonus();
 

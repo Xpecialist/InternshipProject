@@ -1,7 +1,6 @@
 package com.example.SpringPostgress.controller;
 
 import com.example.SpringPostgress.DTO.ProductDTO;
-import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.service.EmployeeProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,7 @@ import com.example.SpringPostgress.DTO.EmployeeProductDTO;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin
+@CrossOrigin //αλλαξε αυτα σε ολα τα Controllers με ενα web.config
 @RestController
 @RequestMapping("/api/v1/employee-products")
 public class EmployeeProductController {

@@ -10,6 +10,7 @@ import com.example.SpringPostgress.repository.VacationRequestRepository;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,7 @@ import java.util.function.Function;
 
 
 @Service
+@Log4j2
 @Transactional
 public class VacationRequestService {
     @Getter
@@ -85,7 +87,7 @@ public class VacationRequestService {
 
         if (vacDays <= employee.getVacationDays()) {
 
-
+            log.debug("In loop for checking vacation request");
             vacationRequestDTO.setStatus(VacationStatus.PENDING);
             vacationRequestRepository.save(modelMapper.map(vacationRequestDTO, VacationRequest.class));
         }

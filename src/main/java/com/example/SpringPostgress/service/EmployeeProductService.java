@@ -7,6 +7,7 @@ import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.model.EmployeeProduct;
 import com.example.SpringPostgress.repository.EmployeeProductRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
+@Log4j2
 @Transactional
 public class EmployeeProductService {
 
@@ -66,10 +68,10 @@ public class EmployeeProductService {
         for (Employee ce: companyEmployees){
 
             String employeeFullName = ce.getFirstName() + " " + ce.getLastName() + ": "+ ce.getId();
-
+            log.debug("In loop for company employees");
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
-
+                    log.debug("In loop for matching employee to product.employeeID");
                     if (!employeeProductMap.containsKey(employeeFullName)) {
 
                         employeeProductMap.put(employeeFullName, new ArrayList<>());
