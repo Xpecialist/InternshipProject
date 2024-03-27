@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.SpringPostgress.DTO.CompanyDTO;
 import com.example.SpringPostgress.service.CompanyService;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/companies")
 public class CompanyController {

@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.service.EmployeeService;
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/employees")
 public class EmployeeController {

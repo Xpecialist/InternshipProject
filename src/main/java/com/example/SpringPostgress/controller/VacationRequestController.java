@@ -11,7 +11,6 @@ import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import java.util.List;
 
 
-@CrossOrigin
 @RestController
 @RequestMapping("/api/v1/vacation-requests")
 public class  VacationRequestController {
