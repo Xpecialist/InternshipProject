@@ -14,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-
+/**
+ * Service class for managing employee product operations.
+ */
 @Service
 @Log4j2
 @Transactional
@@ -39,6 +41,12 @@ public class EmployeeProductService {
         return employeeProductDTO;
     }
 
+    /**
+     * Retrieves all employee products.
+     *
+     * @return A list of all employee product DTOs.
+     * @throws ResourceNotFoundException if no employee products are found.
+     */
     public List<EmployeeProductDTO> getAllEmployeeProducts(){
         List<EmployeeProduct> employeeProductList = employeeProductRepository.findAll();
         if (employeeProductList.isEmpty()) {
@@ -52,12 +60,25 @@ public class EmployeeProductService {
         return true;
     }
 
+    /**
+     * Retrieves an employee product by its ID.
+     *
+     * @param id The ID of the employee product to retrieve.
+     * @return The employee product DTO.
+     * @throws ResourceNotFoundException if the employee product with the given ID is not found.
+     */
     public EmployeeProductDTO getEmployeeProductById(Long id) {
         EmployeeProduct employeeProduct = employeeProductRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Employee Product with ID: " +id+" not found."));
         return modelMapper.map(employeeProduct, EmployeeProductDTO.class);
     }
 
+    /**
+     * Retrieves a map of employees and their associated products for a given company.
+     *
+     * @param companyId The ID of the company.
+     * @return A map where the key is the employee name and the value is a list of product DTOs.
+     */
     public Map<String, List<ProductDTO>> getEmployeeProducts(int companyId) {
 
         Map<String, List<ProductDTO>> employeeProductMap = new HashMap<>();
@@ -81,25 +102,6 @@ public class EmployeeProductService {
             }
         }
 
-        /*  SOLUTION WITH QUERY ON REPOSITORY
-        List<Object[]> employeeProducts = employeeRepository.findEmployeeProductsByCompanyId(companyId);
-
-        for (Object[] result : employeeProducts) {
-            String employeeFullName = (String) result[0] + " " + result[1] ;
-
-            ProductDTO product = new ProductDTO();
-            product.setName((String) result[2]);
-            product.setDescription((String) result[3]);
-            product.setBarcode((String) result[4]);
-            product.setId((Integer) result[5]);
-
-
-            if (!employeeProductMap.containsKey(employeeFullName)) {
-                employeeProductMap.put(employeeFullName, new ArrayList<>());
-            }
-            employeeProductMap.get(employeeFullName).add(product);
-        }
-        */
         return employeeProductMap;
     }
 }

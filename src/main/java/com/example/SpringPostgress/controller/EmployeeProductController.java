@@ -19,7 +19,7 @@ import com.example.SpringPostgress.DTO.EmployeeProductDTO;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin //αλλαξε αυτα σε ολα τα Controllers με ενα web.config
+@CrossOrigin //αλλαξε αυτα σε ολα τα Controllers με ενα web.config θυμησου να κανεις JavaDocs
 @RestController
 @RequestMapping("/api/v1/employee-products")
 public class EmployeeProductController {

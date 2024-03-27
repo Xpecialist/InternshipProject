@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-
+/**
+ * Service class for managing product operations.
+ */
 @Service
 @Transactional
 public class ProductService {
@@ -33,6 +35,12 @@ public class ProductService {
         return productDTO;
     }
 
+    /**
+     * Retrieves all products.
+     *
+     * @return A list of all product DTOs.
+     * @throws ResourceNotFoundException if no products are found.
+     */
     public List<ProductDTO> getAllProducts(){
         List<Product> productList = productRepository.findAll();
         if (productList.isEmpty()) {
@@ -46,6 +54,13 @@ public class ProductService {
         return true;
     }
 
+    /**
+     * Retrieves a product by its ID.
+     *
+     * @param id The ID of the product to retrieve.
+     * @return The product DTO.
+     * @throws ResourceNotFoundException if the product with the given ID is not found.
+     */
     public ProductDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Product with ID: " +id+" not found."));

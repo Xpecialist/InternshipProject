@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+/**
+ * Service class for managing employee operations.
+ */
 @Service
 @Transactional
 public class EmployeeService {
@@ -32,12 +34,26 @@ public class EmployeeService {
         return employeeDTO;
     }
 
+    /**
+     * Retrieves an employee by its ID.
+     *
+     * @param id The ID of the employee to retrieve.
+     * @return The employee DTO.
+     * @throws ResourceNotFoundException if the employee with the given ID is not found.
+     */
     public EmployeeDTO getEmployeeById(long id) {
             Employee employee = employeeRepository.findById(id)
                     .orElseThrow(()->  new ResourceNotFoundException("Employee with ID: " +id+" not found."));
             return modelMapper.map(employee, EmployeeDTO.class);
 
     }
+
+    /**
+     * Retrieves all employees.
+     *
+     * @return A list of all employee DTOs.
+     * @throws ResourceNotFoundException if no employees are found.
+     */
     public List<EmployeeDTO> getAllEmployees(){
         List<Employee> employeeList = employeeRepository.findAll();
         if (employeeList.isEmpty()) {
@@ -50,6 +66,14 @@ public class EmployeeService {
         employeeRepository.delete(modelMapper.map(employeeDTO, Employee.class));
         return true;
     }
+
+    /**
+     * Retrieves employees by company ID.
+     *
+     * @param companyId The ID of the company.
+     * @return A list of employees belonging to the company.
+     * @throws ResourceNotFoundException if no employees are found for the company.
+     */
     public List<Employee> getEmployeesByCompanyId(long companyId){
 
         List<Employee> companyEmployees = employeeRepository.findByCompanyId(companyId);

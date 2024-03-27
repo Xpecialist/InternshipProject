@@ -48,8 +48,8 @@ public class  VacationRequestController {
     }
 
     @PutMapping("/approval")
-    public VacationRequestDTO approveVacationRequest(@RequestBody PendingRequest requestApproval){
-        return vacationRequestService.approveVacationRequest(requestApproval.getId(),requestApproval.getStatusFrontend());
+    public VacationRequestDTO processVacationRequest(@RequestBody PendingRequest requestApproval){
+        return vacationRequestService.processVacationRequest(requestApproval.getId(),requestApproval.getStatusFrontend());
     }
 
     @DeleteMapping

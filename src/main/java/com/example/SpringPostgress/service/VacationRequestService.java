@@ -24,8 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
-
-
+/**
+ * Service class for managing vacation request operations.
+ */
 @Service
 @Log4j2
 @Transactional
@@ -67,12 +68,28 @@ public class VacationRequestService {
 
     }
 
+    /**
+     * Retrieves a vacation request by its ID.
+     *
+     * @param id The ID of the vacation request to retrieve.
+     * @return The vacation request DTO.
+     * @throws ResourceNotFoundException if the vacation request with the given ID is not found.
+     */
     public VacationRequestDTO getVacationRequestById(Long id) {
         VacationRequest vacationRequest = vacationRequestRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Vacation Request with ID: " +id+" not found."));
         return modelMapper.map(vacationRequest, VacationRequestDTO.class);
     }
 
+    /**
+     * Checks and processes a vacation request.
+     *
+     * @param startDate   The start date of the vacation.
+     * @param endDate     The end date of the vacation.
+     * @param holiday     The number of holidays during the vacation.
+     * @param employeeId  The ID of the employee making the vacation request.
+     * @return The processed vacation request DTO.
+     */
     public VacationRequestDTO checkVacationRequest(LocalDate startDate, LocalDate endDate, int holiday,long employeeId ) {
 
         int vacDays = (int) (ChronoUnit.DAYS.between(startDate, endDate) + 1 - holiday);
@@ -96,8 +113,15 @@ public class VacationRequestService {
         return vacationRequestDTO;
 
     }
-    public VacationRequestDTO approveRequest(VacationRequestDTO request){
 
+    /**
+     *  Method used by a Map that approves a vacation request in method processVacationRequest().
+     *
+     * @param request The vacation request to approve.
+     * @return The approved vacation request DTO.
+     * @throws VacationDaysException if there are not enough vacation days available.
+     */
+    public VacationRequestDTO approveRequest(VacationRequestDTO request){
 
         EmployeeDTO employee = employeeService.getEmployeeById(request.getEmployee().getId());
         int remainingDays = employee.getVacationDays() - request.getDays();
@@ -111,13 +135,26 @@ public class VacationRequestService {
             return request;
         }
     }
-
+    /**
+     * Method used by a Map that rejects a vacation request in method processVacationRequest().
+     *
+     * @param request The vacation request to reject.
+     * @return The rejected vacation request DTO.
+     */
     public VacationRequestDTO rejectRequest(VacationRequestDTO request){
         request.setStatus(VacationStatus.REJECTED);
         return request;
     }
 
-    public VacationRequestDTO approveVacationRequest(long id, String statusFE) {
+    /**
+     * Processes a vacation request based on the provided status. Uses a Map to accept of reject the request.
+     *
+     * @param id The ID of the vacation request to approve or reject.
+     * @param statusFE  The status we get from the Frontend to set for the vacation request.
+     * @return The updated vacation request DTO.
+     * @throws VacationDaysException if the vacation request is not pending.
+     */
+    public VacationRequestDTO processVacationRequest(long id, String statusFE) {
 
         VacationRequestDTO request = getVacationRequestById(id);
         if (Objects.equals(String.valueOf(request.getStatus()), "pending")){
