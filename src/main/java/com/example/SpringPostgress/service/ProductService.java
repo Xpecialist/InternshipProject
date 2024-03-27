@@ -4,7 +4,7 @@ import com.example.SpringPostgress.DTO.ProductDTO;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Product;
 import com.example.SpringPostgress.repository.ProductRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +40,7 @@ public class ProductService {
      * @return A list of all product DTOs.
      * @throws ResourceNotFoundException if no products are found.
      */
+    @Transactional(readOnly = true)
     public List<ProductDTO> getAllProducts(){
         List<Product> productList = productRepository.findAll();
         if (productList.isEmpty()) {
@@ -60,6 +61,7 @@ public class ProductService {
      * @return The product DTO.
      * @throws ResourceNotFoundException if the product with the given ID is not found.
      */
+    @Transactional(readOnly = true)
     public ProductDTO getProductById(Long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Product with ID: " +id+" not found."));

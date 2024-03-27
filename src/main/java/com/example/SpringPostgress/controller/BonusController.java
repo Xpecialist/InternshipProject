@@ -19,7 +19,6 @@ public class BonusController {
     @Autowired
     private BonusService bonusService;
 
-    @Transactional(readOnly = true)
     @GetMapping
     public List<BonusDTO> getBonuses(){
         return bonusService.getAllBonuses();
@@ -36,7 +35,6 @@ public class BonusController {
         return bonusService.updateBonus(bonusDTO);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public BonusDTO getBonusById(@PathVariable Long id){
         return bonusService.getBonusById(id);

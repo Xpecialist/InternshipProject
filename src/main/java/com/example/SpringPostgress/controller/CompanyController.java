@@ -25,7 +25,6 @@ public class CompanyController {
     private CompanyService companyService;
 
 
-    @Transactional(readOnly = true)
     @GetMapping
     public List<CompanyDTO> getCompanies(){
         return companyService.getAllCompanies();
@@ -42,13 +41,11 @@ public class CompanyController {
         return companyService.updateCompany(companyDTO);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public CompanyDTO getCompanyById(@PathVariable Long id){
         return companyService.getCompanyById(id);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/expenses/{companyId}")
     public double getCompanyExpenses(@PathVariable long companyId){ return companyService.getCompanyExpenses((int) companyId); }
 

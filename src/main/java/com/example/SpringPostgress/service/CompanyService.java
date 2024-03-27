@@ -4,7 +4,7 @@ import com.example.SpringPostgress.DTO.CompanyDTO;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.*;
 import com.example.SpringPostgress.repository.CompanyRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,6 +56,7 @@ public class CompanyService {
      * @return A list of all company DTOs.
      * @throws ResourceNotFoundException if no companies are found.
      */
+    @Transactional(readOnly = true)
     public List<CompanyDTO> getAllCompanies(){
         List<Company> companyList = companyRepository.findAll();
         if (companyList.isEmpty()) {
@@ -82,6 +83,7 @@ public class CompanyService {
      * @return The company DTO.
      * @throws ResourceNotFoundException if the company with the given ID is not found.
      */
+    @Transactional(readOnly = true)
     public CompanyDTO getCompanyById(Long id) {
         Company company = companyRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Company with ID: " +id+" not found."));
@@ -95,6 +97,7 @@ public class CompanyService {
      * @return The total expenses of the company.
      * @throws ResourceNotFoundException if no employees are found for the company.
      */
+    @Transactional(readOnly = true)
     public double getCompanyExpenses(int companyId) {
 
         List<Employee> employees = employeeService.getEmployeesByCompanyId(companyId);

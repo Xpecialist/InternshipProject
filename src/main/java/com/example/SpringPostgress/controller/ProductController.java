@@ -3,8 +3,6 @@ package com.example.SpringPostgress.controller;
 
 import com.example.SpringPostgress.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,7 +23,6 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    @Transactional(readOnly = true)
     @GetMapping
     public List<ProductDTO> getProducts(){
         return productService.getAllProducts();
@@ -41,7 +38,6 @@ public class ProductController {
         return productService.updateProduct(productDTO);
     }
 
-    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public ProductDTO getProductById(@PathVariable Long id){
         return productService.getProductById(id);

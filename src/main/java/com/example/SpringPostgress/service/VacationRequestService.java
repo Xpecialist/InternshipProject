@@ -5,10 +5,9 @@ import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import com.example.SpringPostgress.Enum.VacationStatus;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.exception.VacationDaysException;
-import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.model.VacationRequest;
 import com.example.SpringPostgress.repository.VacationRequestRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.Getter;
 
 import lombok.extern.log4j.Log4j2;
@@ -55,6 +54,7 @@ public class VacationRequestService {
         return vacationRequestDTO;
     }
 
+    @Transactional(readOnly = true)
     public List<VacationRequestDTO> getAllVacationRequests() {
         List<VacationRequest> vacationRequestList = vacationRequestRepository.findAll();
         if (vacationRequestList.isEmpty()) {
@@ -77,6 +77,7 @@ public class VacationRequestService {
      * @return The vacation request DTO.
      * @throws ResourceNotFoundException if the vacation request with the given ID is not found.
      */
+    @Transactional(readOnly = true)
     public VacationRequestDTO getVacationRequestById(Long id) {
         VacationRequest vacationRequest = vacationRequestRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Vacation Request with ID: " +id+" not found."));

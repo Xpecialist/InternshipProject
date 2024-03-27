@@ -6,7 +6,7 @@ import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.model.EmployeeProduct;
 import com.example.SpringPostgress.repository.EmployeeProductRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -47,6 +47,7 @@ public class EmployeeProductService {
      * @return A list of all employee product DTOs.
      * @throws ResourceNotFoundException if no employee products are found.
      */
+    @Transactional(readOnly = true)
     public List<EmployeeProductDTO> getAllEmployeeProducts(){
         List<EmployeeProduct> employeeProductList = employeeProductRepository.findAll();
         if (employeeProductList.isEmpty()) {
@@ -67,6 +68,7 @@ public class EmployeeProductService {
      * @return The employee product DTO.
      * @throws ResourceNotFoundException if the employee product with the given ID is not found.
      */
+    @Transactional(readOnly = true)
     public EmployeeProductDTO getEmployeeProductById(Long id) {
         EmployeeProduct employeeProduct = employeeProductRepository.findById(id)
                 .orElseThrow(()->  new ResourceNotFoundException("Employee Product with ID: " +id+" not found."));
@@ -79,6 +81,7 @@ public class EmployeeProductService {
      * @param companyId The ID of the company.
      * @return A map where the key is the employee name and the value is a list of product DTOs.
      */
+    @Transactional(readOnly = true)
     public Map<String, List<ProductDTO>> getEmployeeProducts(int companyId) {
 
         Map<String, List<ProductDTO>> employeeProductMap = new HashMap<>();

@@ -6,12 +6,12 @@ import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Bonus;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.repository.BonusRepository;
-import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -57,6 +57,7 @@ public class BonusService {
      * @return List of all bonus DTOs.
      * @throws ResourceNotFoundException if no bonuses are found.
      */
+    @Transactional(readOnly = true)
     public List<BonusDTO> getAllBonuses(){
         List<Bonus> bonusList = bonusRepository.findAll();
         if (bonusList.isEmpty()) {
@@ -80,6 +81,7 @@ public class BonusService {
      * @param id The ID of the bonus.
      * @return The bonus DTO.
      */
+    @Transactional(readOnly = true)
     public BonusDTO getBonusById(Long id) {
         Optional<Bonus> bonus = bonusRepository.findById(id);
         return modelMapper.map(bonus, BonusDTO.class);

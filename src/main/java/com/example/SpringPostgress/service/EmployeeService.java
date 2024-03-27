@@ -4,7 +4,7 @@ import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.repository.EmployeeRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,7 @@ public class EmployeeService {
      * @return The employee DTO.
      * @throws ResourceNotFoundException if the employee with the given ID is not found.
      */
+    @Transactional(readOnly = true)
     public EmployeeDTO getEmployeeById(long id) {
             Employee employee = employeeRepository.findById(id)
                     .orElseThrow(()->  new ResourceNotFoundException("Employee with ID: " +id+" not found."));
@@ -54,6 +55,7 @@ public class EmployeeService {
      * @return A list of all employee DTOs.
      * @throws ResourceNotFoundException if no employees are found.
      */
+    @Transactional(readOnly = true)
     public List<EmployeeDTO> getAllEmployees(){
         List<Employee> employeeList = employeeRepository.findAll();
         if (employeeList.isEmpty()) {
@@ -74,6 +76,7 @@ public class EmployeeService {
      * @return A list of employees belonging to the company.
      * @throws ResourceNotFoundException if no employees are found for the company.
      */
+    @Transactional(readOnly = true)
     public List<Employee> getEmployeesByCompanyId(long companyId){
 
         List<Employee> companyEmployees = employeeRepository.findByCompanyId(companyId);
