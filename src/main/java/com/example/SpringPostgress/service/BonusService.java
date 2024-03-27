@@ -108,15 +108,27 @@ public class BonusService {
 
         for (Employee employee : employees) {
             log.debug("In loop for creating company bonuses");
-            float bonusAmount = (float) calculateBonus(employee.getSalary(), season);
-            Bonus bonus = new Bonus();
-            bonus.setEmployee(employee);
-            bonus.setCompany(employee.getCompany());
-            bonus.setAmount(bonusAmount);
-            bonuses.add(bonus);
+            bonuses.add(createEmployeeBonus(employee, season));
         }
         bonusRepository.saveAll(bonuses);
         return bonuses;
+    }
+
+    /**
+     * Creates a bonus object for an employee based on the employee's salary and the given season.
+     *
+     * @param employee the employee for whom the bonus is being created
+     * @param season   the season for which the bonus is being calculated
+     * @return a Bonus object representing the bonus for the employee
+     */
+    private Bonus createEmployeeBonus(Employee employee, String season){
+
+        float bonusAmount = (float) calculateBonus(employee.getSalary(), season);
+        Bonus bonus = new Bonus();
+        bonus.setEmployee(employee);
+        bonus.setCompany(employee.getCompany());
+        bonus.setAmount(bonusAmount);
+        return bonus;
     }
 }
 

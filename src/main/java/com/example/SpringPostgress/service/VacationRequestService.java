@@ -5,6 +5,7 @@ import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import com.example.SpringPostgress.Enum.VacationStatus;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.exception.VacationDaysException;
+import com.example.SpringPostgress.model.Employee;
 import com.example.SpringPostgress.model.VacationRequest;
 import com.example.SpringPostgress.repository.VacationRequestRepository;
 import jakarta.transaction.Transactional;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
@@ -92,26 +94,71 @@ public class VacationRequestService {
      */
     public VacationRequestDTO checkVacationRequest(LocalDate startDate, LocalDate endDate, int holiday,long employeeId ) {
 
-        int vacDays = (int) (ChronoUnit.DAYS.between(startDate, endDate) + 1 - holiday);
-
+        if (startDate == null) {
+            throw new ResourceNotFoundException("startDate string is NULL!");
+        }
+        int vacDays = getBusinessDays(startDate, endDate) + 1 - holiday;
         EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
+        VacationRequestDTO vacationRequestDTO = createVacationRequest(employee, startDate, endDate, vacDays);
+
+        if (vacDays <= employee.getVacationDays()) {
+            log.debug("In loop for checking vacation request");
+            vacationRequestDTO.setStatus(VacationStatus.PENDING);
+            vacationRequestRepository.save(modelMapper.map(vacationRequestDTO, VacationRequest.class));
+        }
+        else{
+            vacationRequestDTO.setStatus(VacationStatus.REJECTED);
+        }
+
+        return vacationRequestDTO;
+
+    }
+
+    /**
+     * Creates manually a vacationRequestDTO object with the given employee, start date, end date, and number of vacation days.
+     *
+     * @param employee   the employee associated with the vacation request
+     * @param startDate  the start date of the vacation request
+     * @param endDate    the end date of the vacation request
+     * @param vacDays    the number of vacation days in the request
+     * @return a vacation request DTO object representing the vacation request
+     */
+    private VacationRequestDTO createVacationRequest(EmployeeDTO employee, LocalDate startDate, LocalDate endDate, int vacDays){
 
         VacationRequestDTO vacationRequestDTO = new VacationRequestDTO();
         vacationRequestDTO.setEmployee(employee);
         vacationRequestDTO.setDays(vacDays);
         vacationRequestDTO.setStartDate(startDate);
         vacationRequestDTO.setEndDate(endDate);
-
-        if (vacDays <= employee.getVacationDays()) {
-
-            log.debug("In loop for checking vacation request");
-            vacationRequestDTO.setStatus(VacationStatus.PENDING);
-            vacationRequestRepository.save(modelMapper.map(vacationRequestDTO, VacationRequest.class));
-        }
-        else{ vacationRequestDTO.setStatus(VacationStatus.REJECTED); }
-
         return vacationRequestDTO;
+    }
 
+    /**
+     * Calculates the number of business days (excluding weekends) between two dates.
+     *
+     * @param startDate the start date of the range (inclusive)
+     * @param endDate   the end date of the range (inclusive)
+     * @return the number of business days between the start and end dates
+     */
+    private static int getBusinessDays(LocalDate startDate, LocalDate endDate) {
+        int businessDays = 0;
+        LocalDate date = startDate;
+        while (!date.isAfter(endDate)) {
+            if (isBusinessDay(date)) { businessDays++; }
+            date = date.plusDays(1);
+        }
+        return businessDays;
+    }
+
+    /**
+     * Checks if a given date is a business day (not a Saturday or Sunday).
+     *
+     * @param date the date to check
+     * @return {@code true} if the date is a business day, {@code false} otherwise
+     */
+    private static boolean isBusinessDay(LocalDate date) {
+        DayOfWeek dayOfWeek = date.getDayOfWeek();
+        return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
     }
 
     /**
@@ -121,7 +168,7 @@ public class VacationRequestService {
      * @return The approved vacation request DTO.
      * @throws VacationDaysException if there are not enough vacation days available.
      */
-    public VacationRequestDTO approveRequest(VacationRequestDTO request){
+    private VacationRequestDTO approveRequest(VacationRequestDTO request){
 
         EmployeeDTO employee = employeeService.getEmployeeById(request.getEmployee().getId());
         int remainingDays = employee.getVacationDays() - request.getDays();
@@ -141,7 +188,7 @@ public class VacationRequestService {
      * @param request The vacation request to reject.
      * @return The rejected vacation request DTO.
      */
-    public VacationRequestDTO rejectRequest(VacationRequestDTO request){
+    private VacationRequestDTO rejectRequest(VacationRequestDTO request){
         request.setStatus(VacationStatus.REJECTED);
         return request;
     }
@@ -160,13 +207,13 @@ public class VacationRequestService {
         if (Objects.equals(String.valueOf(request.getStatus()), "pending")){
             throw new VacationDaysException("Vacation Request with ID: "+id+" is not pending.");
         }
+        return updateVacationRequest(processVacationRequestMap(request, statusFE));
+    }
+    private VacationRequestDTO processVacationRequestMap(VacationRequestDTO request, String status){
 
         Map<String, Function<VacationRequestDTO,VacationRequestDTO>> requestMap = new HashMap<>();
         requestMap.put("accepted", this::approveRequest);
         requestMap.put("rejected", this::rejectRequest);
-        VacationRequestDTO r = requestMap.get(statusFE).apply(request);
-
-        return updateVacationRequest(r);
-
+        return requestMap.get(status).apply(request);
     }
 }

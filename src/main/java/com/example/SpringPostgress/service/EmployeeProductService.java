@@ -87,7 +87,7 @@ public class EmployeeProductService {
         // Map to store counts of employees with duplicate name
         Map<String, Integer> nameCountMap = new HashMap<>();
 
-
+        //MAYBE NEEDS TO BECOME A METHOD
         for (Employee ce: companyEmployees){
 
             log.debug("In loop for company employees");
@@ -96,21 +96,19 @@ public class EmployeeProductService {
             //Adds count(starts with 0) to duplicate name entries on mapCountMap
             int count = nameCountMap.getOrDefault(employeeFullName.toString(), 0) + 1;
             nameCountMap.put(employeeFullName.toString(), count);
-            //Add a "white space" to key if the name is duplicate
+            //Add a "white space" to map's key for each duplication of itself
             employeeFullName.append(" ".repeat(Math.max(0, count)));
 
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
                     log.debug("In loop for matching employee.ID to employeeProduct.employeeID");
                     if (!employeeProductMap.containsKey(employeeFullName.toString())) {
-
                         employeeProductMap.put(employeeFullName.toString(), new ArrayList<>());
                     }
                     employeeProductMap.get(employeeFullName.toString()).add(p.getProduct());
                 }
             }
         }
-
         return employeeProductMap;
     }
 }

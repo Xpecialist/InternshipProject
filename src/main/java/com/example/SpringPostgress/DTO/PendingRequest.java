@@ -1,4 +1,5 @@
 package com.example.SpringPostgress.DTO;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 @EqualsAndHashCode(callSuper = true)
@@ -6,8 +7,9 @@ import lombok.*;
 @NoArgsConstructor @AllArgsConstructor
 public class PendingRequest extends VacationRequestDTO {
 
-    private int holidays;
     private long employeeId;
     private String statusFrontend;
+    @JsonIgnore
+    private int holidays;
 
 }
