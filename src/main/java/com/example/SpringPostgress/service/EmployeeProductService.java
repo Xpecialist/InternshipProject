@@ -90,28 +90,38 @@ public class EmployeeProductService {
         // Map to store counts of employees with duplicate name
         Map<String, Integer> nameCountMap = new HashMap<>();
 
-        //MAYBE NEEDS TO BECOME A METHOD
+        //TODO: NEEDS TO BE BROKEN TO METHODS
         for (Employee ce: companyEmployees){
 
-            log.debug("In loop for company employees");
-
-            StringBuilder employeeFullName = new StringBuilder(ce.getFirstName() + " " + ce.getLastName());
-            //Adds count(starts with 0) to duplicate name entries on mapCountMap
-            int count = nameCountMap.getOrDefault(employeeFullName.toString(), 0) + 1;
-            nameCountMap.put(employeeFullName.toString(), count);
-            //Add a "white space" to map's key for each duplication of itself
-            employeeFullName.append(" ".repeat(Math.max(0, count)));
+            StringBuilder employeeFullName = getFullNameList(ce, nameCountMap);
 
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
-                    log.debug("In loop for matching employee.ID to employeeProduct.employeeID");
-                    if (!employeeProductMap.containsKey(employeeFullName.toString())) {
-                        employeeProductMap.put(employeeFullName.toString(), new ArrayList<>());
-                    }
-                    employeeProductMap.get(employeeFullName.toString()).add(p.getProduct());
+                    //Δεν ξερω ποσο σωστο ειναι να χειριζομαι map εκτος του range του method(Μπορει να θελει να αρχικοποιησω αλλο map μεσα και να το map-αρω μετα στον τελικο)
+                    fillCompanyEmployeesProductsMap(employeeProductMap, p,employeeFullName);
                 }
             }
         }
         return employeeProductMap;
+    }
+
+    private StringBuilder getFullNameList(Employee ce, Map<String, Integer> map){
+
+        log.debug("In loop for creating Full Name");
+        StringBuilder employeeFullName = new StringBuilder(ce.getFirstName() + " " + ce.getLastName());
+        //Adds count(starts with 0) to duplicate name entries on mapCountMap
+        int count = map.getOrDefault(employeeFullName.toString(), 0) + 1;
+        map.put(employeeFullName.toString(), count);
+        //Add a "white space" to map's key for each duplication of itself
+        employeeFullName.append(" ".repeat(Math.max(0, count)));
+        return employeeFullName;
+    }
+    private void fillCompanyEmployeesProductsMap(Map<String, List<ProductDTO>> map, EmployeeProductDTO p, StringBuilder employeeFullName){
+
+            log.debug("In loop for filling out the Company Employees Products Map");
+            if (!map.containsKey(employeeFullName.toString())) {
+                map.put(employeeFullName.toString(), new ArrayList<>());
+            }
+            map.get(employeeFullName.toString()).add(p.getProduct());
     }
 }
