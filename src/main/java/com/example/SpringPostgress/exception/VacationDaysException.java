@@ -9,6 +9,6 @@ import java.io.Serial;
 public class VacationDaysException extends RuntimeException {
 
     @Serial
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 4L;
     public VacationDaysException(String message) { super(message); }
 }

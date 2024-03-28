@@ -65,5 +65,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.EXPECTATION_FAILED);
     }
 
+    @ExceptionHandler({NullExpressionException.class, NullPointerException.class})
+    public ResponseEntity<Object> handleNullException(NullExpressionException ex) {
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("Input error occurred", ex.getMessage());
+        log.error("Input error occurred: ", ex);
+
+        return new ResponseEntity<>(body, HttpStatus.NO_CONTENT);
+    }
+
+
 
 }

@@ -3,6 +3,7 @@ package com.example.SpringPostgress.service;
 import com.example.SpringPostgress.DTO.EmployeeDTO;
 import com.example.SpringPostgress.DTO.VacationRequestDTO;
 import com.example.SpringPostgress.Enum.VacationStatus;
+import com.example.SpringPostgress.exception.NullExpressionException;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.exception.VacationDaysException;
 import com.example.SpringPostgress.model.VacationRequest;
@@ -95,15 +96,16 @@ public class VacationRequestService {
      */
     public VacationRequestDTO checkVacationRequest(LocalDate startDate, LocalDate endDate, int holiday,long employeeId ) {
 
-        if (startDate == null) {
-            throw new ResourceNotFoundException("startDate string is NULL!");
+        if (startDate == null || endDate == null) {
+            throw new NullExpressionException("Either input dates are NULL! ");
         }
+
         int vacDays = getBusinessDays(startDate, endDate) + 1 - holiday;
         EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
         VacationRequestDTO vacationRequestDTO = createVacationRequest(employee, startDate, endDate, vacDays);
 
         if (vacDays <= employee.getVacationDays()) {
-            log.debug("In loop for checking vacation request");
+            log.debug("Employee days are >= vacation taken.");
             vacationRequestDTO.setStatus(VacationStatus.PENDING);
             vacationRequestRepository.save(modelMapper.map(vacationRequestDTO, VacationRequest.class));
         }
@@ -205,16 +207,19 @@ public class VacationRequestService {
     public VacationRequestDTO processVacationRequest(long id, String statusFE) {
 
         VacationRequestDTO request = getVacationRequestById(id);
-        if (Objects.equals(String.valueOf(request.getStatus()), "pending")){
-            throw new VacationDaysException("Vacation Request with ID: "+id+" is not pending.");
+        if (!request.getStatus().equals(VacationStatus.PENDING)){
+            throw new IllegalArgumentException("Vacation Request with ID: "+id+" is not PENDING.");
         }
         return updateVacationRequest(processVacationRequestMap(request, statusFE));
     }
     private VacationRequestDTO processVacationRequestMap(VacationRequestDTO request, String status){
 
         Map<String, Function<VacationRequestDTO,VacationRequestDTO>> requestMap = new HashMap<>();
-        requestMap.put("accepted", this::approveRequest);
-        requestMap.put("rejected", this::rejectRequest);
+        //checking if status is in correct form
+        VacationStatus.checkStatusValidity(status);
+
+        requestMap.put("ACCEPTED", this::approveRequest);
+        requestMap.put("REJECTED", this::rejectRequest);
         return requestMap.get(status).apply(request);
     }
 }
