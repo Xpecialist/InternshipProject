@@ -90,21 +90,26 @@ public class EmployeeProductService {
         // Map to store counts of employees with duplicate name
         Map<String, Integer> nameCountMap = new HashMap<>();
 
-        //TODO: NEEDS TO BE BROKEN TO METHODS
         for (Employee ce: companyEmployees){
-
+            //returns the full name of an employee
             StringBuilder employeeFullName = getFullNameList(ce, nameCountMap);
-
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
                     //Δεν ξερω ποσο σωστο ειναι να χειριζομαι map εκτος του range του method(Μπορει να θελει να αρχικοποιησω αλλο map μεσα και να το map-αρω μετα στον τελικο)
-                    fillCompanyEmployeesProductsMap(employeeProductMap, p,employeeFullName);
+                    fillCompanyEmployeesProductsMap(employeeProductMap, p, employeeFullName);
                 }
             }
         }
         return employeeProductMap;
     }
 
+    /**
+     * Generates the full name of an employee with an appended white space to distinguish between employees with the same name.
+     *
+     * @param ce The Employee object for which the full name is to be generated.
+     * @param map A map containing the count of occurrences of each employee's full name.
+     * @return A StringBuilder object representing the full name of the employee with appended white space as needed.
+     */
     private StringBuilder getFullNameList(Employee ce, Map<String, Integer> map){
 
         log.debug("In loop for creating Full Name");
@@ -116,6 +121,13 @@ public class EmployeeProductService {
         employeeFullName.append(" ".repeat(Math.max(0, count)));
         return employeeFullName;
     }
+    /**
+     * Fills the provided map with EmployeeProducts, appending them to the appropriate employee's list.
+     *
+     * @param map The map to be filled with employee products.
+     * @param p The EmployeeProductDTO object containing information about the employee's product.
+     * @param employeeFullName The full name of the employee, including appended white space if needed.
+     */
     private void fillCompanyEmployeesProductsMap(Map<String, List<ProductDTO>> map, EmployeeProductDTO p, StringBuilder employeeFullName){
 
             log.debug("In loop for filling out the Company Employees Products Map");

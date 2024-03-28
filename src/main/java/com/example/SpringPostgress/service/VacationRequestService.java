@@ -212,6 +212,15 @@ public class VacationRequestService {
         }
         return updateVacationRequest(processVacationRequestMap(request, statusFE));
     }
+
+    /**
+     * Processes a vacation request based on the provided status and returns the updated request.
+     *
+     * @param request The VacationRequestDTO object to be processed.
+     * @param status The status to which the request should be updated based on.
+     * @return The updated VacationRequestDTO object after processing.
+     * @throws IllegalArgumentException if the provided status is not valid.
+     */
     private VacationRequestDTO processVacationRequestMap(VacationRequestDTO request, String status){
 
         Map<String, Function<VacationRequestDTO,VacationRequestDTO>> requestMap = new HashMap<>();
