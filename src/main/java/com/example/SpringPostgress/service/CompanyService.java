@@ -98,11 +98,11 @@ public class CompanyService {
      * @throws ResourceNotFoundException if no employees are found for the company.
      */
     @Transactional(readOnly = true)
-    public double getCompanyExpenses(int companyId) {
+    public double getCompanyExpenses(long companyId) {
 
         List<Employee> employees = employeeService.getEmployeesByCompanyId(companyId);
         if (employees.isEmpty()) {
-            throw new ResourceNotFoundException("No company employees found.");
+            throw new ResourceNotFoundException("Company with ID: "+companyId+" doesn't have any employees");
         }
 
         return employees.stream().mapToDouble(Employee::getSalary).sum();

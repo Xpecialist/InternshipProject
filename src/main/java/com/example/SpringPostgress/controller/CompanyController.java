@@ -47,7 +47,7 @@ public class CompanyController {
     }
 
     @GetMapping("/expenses/{companyId}")
-    public double getCompanyExpenses(@PathVariable long companyId){ return companyService.getCompanyExpenses((int) companyId); }
+    public double getCompanyExpenses(@PathVariable long companyId){ return companyService.getCompanyExpenses(companyId); }
 
     @DeleteMapping
     public boolean deleteCompany(@RequestBody CompanyDTO companyDTO){

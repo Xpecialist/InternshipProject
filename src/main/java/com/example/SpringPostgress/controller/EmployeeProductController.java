@@ -50,7 +50,7 @@ public class EmployeeProductController {
     }
 
     @GetMapping("/company-products/{companyId}")
-    public Map<String, List<ProductDTO>> getEmployeeProducts2(@PathVariable int companyId){
+    public Map<String, List<ProductDTO>> getEmployeeProducts(@PathVariable int companyId){
         return employeeProductService.getEmployeeProducts(companyId);
     }
 

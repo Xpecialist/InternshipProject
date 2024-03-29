@@ -100,17 +100,20 @@ public class VacationRequestService {
             throw new NullExpressionException("Either input dates are NULL! ");
         }
 
-        int vacDays = getBusinessDays(startDate, endDate) + 1 - holiday;
+        int vacDays = getBusinessDays(startDate, endDate) - holiday; //doesn't need +1 cause getBusinessDays() counts the first date as well
+        if(vacDays <= 0){ throw new VacationDaysException("No need for vacation request, vacDays <= 0");}
         EmployeeDTO employee = employeeService.getEmployeeById(employeeId);
         VacationRequestDTO vacationRequestDTO = createVacationRequest(employee, startDate, endDate, vacDays);
 
         if (vacDays <= employee.getVacationDays()) {
-            log.debug("Employee days are >= vacation taken.");
+            log.debug("Available vacation days >= requested vacation days.");
             vacationRequestDTO.setStatus(VacationStatus.PENDING);
             vacationRequestRepository.save(modelMapper.map(vacationRequestDTO, VacationRequest.class));
         }
         else{
+            log.debug("Available vacation days <= requested vacation days.");
             vacationRequestDTO.setStatus(VacationStatus.REJECTED);
+            throw new VacationDaysException("Not enough days available. Remaining vacation days: "+employee.getVacationDays()+", while you asked for: "+vacDays+". Request REJECTED & NOT SAVED.");
         }
 
         return vacationRequestDTO;
@@ -155,7 +158,6 @@ public class VacationRequestService {
 
     /**
      * Checks if a given date is a business day (not a Saturday or Sunday).
-     *
      * @param date the date to check
      * @return {@code true} if the date is a business day, {@code false} otherwise
      */
@@ -176,11 +178,11 @@ public class VacationRequestService {
         EmployeeDTO employee = employeeService.getEmployeeById(request.getEmployee().getId());
         int remainingDays = employee.getVacationDays() - request.getDays();
         if ( remainingDays < 0) {
-            throw new VacationDaysException("Not enough days available. Remaining days: "+remainingDays);
+            throw new VacationDaysException("Not enough days available. Remaining  vacation days: "+employee.getVacationDays()+", while you asked for: "+request.getDays());
         }
         else {
             request.setStatus(VacationStatus.APPROVED);
-            employee.setVacationDays((employee.getVacationDays() - request.getDays()));
+            employee.setVacationDays(remainingDays);
             employeeService.updateEmployee(employee);
             return request;
         }
@@ -200,35 +202,35 @@ public class VacationRequestService {
      * Processes a vacation request based on the provided status. Uses a Map to accept of reject the request.
      *
      * @param id The ID of the vacation request to approve or reject.
-     * @param statusFE  The status we get from the Frontend to set for the vacation request.
+     * @param statusFe  The status we get from the Frontend to set for the vacation request.
      * @return The updated vacation request DTO.
      * @throws VacationDaysException if the vacation request is not pending.
      */
-    public VacationRequestDTO processVacationRequest(long id, String statusFE) {
+    public VacationRequestDTO processVacationRequest(long id, String statusFe) {
 
         VacationRequestDTO request = getVacationRequestById(id);
         if (!request.getStatus().equals(VacationStatus.PENDING)){
             throw new IllegalArgumentException("Vacation Request with ID: "+id+" is not PENDING.");
         }
-        return updateVacationRequest(processVacationRequestMap(request, statusFE));
+        return updateVacationRequest(processVacationRequestMap(request, statusFe));
     }
 
     /**
      * Processes a vacation request based on the provided status and returns the updated request.
      *
      * @param request The VacationRequestDTO object to be processed.
-     * @param status The status to which the request should be updated based on.
+     * @param statusFe The status to which the request should be updated based on.
      * @return The updated VacationRequestDTO object after processing.
      * @throws IllegalArgumentException if the provided status is not valid.
      */
-    private VacationRequestDTO processVacationRequestMap(VacationRequestDTO request, String status){
+    private VacationRequestDTO processVacationRequestMap(VacationRequestDTO request, String statusFe){
 
         Map<String, Function<VacationRequestDTO,VacationRequestDTO>> requestMap = new HashMap<>();
         //checking if status is in correct form
-        VacationStatus.checkStatusValidity(status);
+        VacationStatus.checkStatusValidity(statusFe);
 
         requestMap.put("ACCEPTED", this::approveRequest);
         requestMap.put("REJECTED", this::rejectRequest);
-        return requestMap.get(status).apply(request);
+        return requestMap.get(statusFe).apply(request);
     }
 }

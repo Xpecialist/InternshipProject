@@ -45,7 +45,7 @@ public class BonusController {
         return bonusService.deleteBonus(bonusDTO);
     }
 
-    @PostMapping("/calculation")
+    @GetMapping("/calculation")
     public double calculateBonus(BonusCriteria bonusCriteria )
     {
         return bonusService.calculateBonus(bonusCriteria.getSalary(), bonusCriteria.getSeason());
