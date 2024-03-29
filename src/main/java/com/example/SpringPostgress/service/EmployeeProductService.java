@@ -1,6 +1,7 @@
 package com.example.SpringPostgress.service;
 
 import com.example.SpringPostgress.DTO.EmployeeProductDTO;
+import com.example.SpringPostgress.DTO.EmployeeTemp;
 import com.example.SpringPostgress.DTO.ProductDTO;
 import com.example.SpringPostgress.exception.ResourceNotFoundException;
 import com.example.SpringPostgress.model.Employee;
@@ -82,18 +83,21 @@ public class EmployeeProductService {
      * @return A map where the key is the employee name and the value is a list of product DTOs.
      */
     @Transactional(readOnly = true)
-    public Map<String, List<ProductDTO>> getEmployeeProducts(int companyId) {
+    public Map<EmployeeTemp, List<ProductDTO>> getEmployeeProducts(int companyId) {
 
-        Map<String, List<ProductDTO>> employeeProductMap = new HashMap<>();
+        Map<EmployeeTemp, List<ProductDTO>> employeeProductMap = new HashMap<>();
         List<EmployeeProductDTO> products = getAllEmployeeProducts();
         List<Employee> companyEmployees = employeeService.getEmployeesByCompanyId(companyId);
 
         for (Employee ce: companyEmployees){
-            StringBuilder employeeFullName = getFullName(ce);
+            //create a temp object with employee ID and FULL NAME to pass through the Map
+            EmployeeTemp et = new EmployeeTemp(ce.getId(), ce.getFirstName().concat(" ").concat(ce.getLastName()));
             for(EmployeeProductDTO p : products){
                 if(ce.getId() == p.getEmployee().getId()){
-                    employeeProductMap.put(employeeFullName.toString(), new ArrayList<>());
-                    employeeProductMap.get(employeeFullName.toString()).add(p.getProduct());
+                    if(!employeeProductMap.containsKey(et)){
+                        employeeProductMap.put(et, new ArrayList<>());
+                    }
+                    employeeProductMap.get(et).add(p.getProduct());
                 }
             }
         }
@@ -106,10 +110,10 @@ public class EmployeeProductService {
      * @param ce The Employee object for which the full name is to be generated.
      * @return A StringBuilder object representing the full name of the employee with appended white space as needed.
      */
-    private StringBuilder getFullName(Employee ce){
+    private StringBuilder getFullName(Employee ce, Map<String, Integer> map ){
+
         // Map to store counts of employees with duplicate name
-        Map<String, Integer> map = new HashMap<>();
-        log.debug("In loop for creating Full Name");
+        log.debug("In method for creating Full Name");
         StringBuilder employeeFullName = new StringBuilder(ce.getFirstName() + " " + ce.getLastName());
         //Adds count(starts with 0) to duplicate name entries on mapCountMap
         int count = map.getOrDefault(employeeFullName.toString(), 0) + 1;

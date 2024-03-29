@@ -1,5 +1,6 @@
 package com.example.SpringPostgress.controller;
 
+import com.example.SpringPostgress.DTO.EmployeeTemp;
 import com.example.SpringPostgress.DTO.ProductDTO;
 import com.example.SpringPostgress.service.EmployeeProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +51,7 @@ public class EmployeeProductController {
     }
 
     @GetMapping("/company-products/{companyId}")
-    public Map<String, List<ProductDTO>> getEmployeeProducts(@PathVariable int companyId){
+    public Map<EmployeeTemp, List<ProductDTO>> getEmployeeProducts(@PathVariable int companyId){
         return employeeProductService.getEmployeeProducts(companyId);
     }
 
