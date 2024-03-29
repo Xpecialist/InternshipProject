@@ -104,25 +104,4 @@ public class EmployeeProductService {
         return employeeProductMap;
     }
 
-    /**
-     * Generates the full name of an employee with an appended white space to distinguish between employees with the same name.
-     *
-     * @param ce The Employee object for which the full name is to be generated.
-     * @return A StringBuilder object representing the full name of the employee with appended white space as needed.
-     */
-    private StringBuilder getFullName(Employee ce, Map<String, Integer> map ){
-
-        // Map to store counts of employees with duplicate name
-        log.debug("In method for creating Full Name");
-        StringBuilder employeeFullName = new StringBuilder(ce.getFirstName() + " " + ce.getLastName());
-        //Adds count(starts with 0) to duplicate name entries on mapCountMap
-        int count = map.getOrDefault(employeeFullName.toString(), 0) + 1;
-        map.put(employeeFullName.toString(), count);
-        //Add a "white space" to map's key for each duplication of itself
-        employeeFullName.append(" ".repeat(Math.max(0, count)));
-        return employeeFullName;
-
-        //ANOTHER MORE ELEGANT SOLUTION: while(map.containsKey(employeeFullName)) employeeFullName.append(" ");
-    }
-
 }
